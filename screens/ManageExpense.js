@@ -1,8 +1,8 @@
 import { useLayoutEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import IconButton from './components/IconButton';
+import IconButton from '../components/IconButton';
 import { GlobalStyles } from '../assets/constants/styles';
-import CustomButton from './components/CustomButton';
+import CustomButton from '../components/CustomButton';
 
 const ManageExpense = ({ route, navigation }) => {
     const editedExpenseId = route.params?.expenseId;

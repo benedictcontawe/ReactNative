@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import { GlobalStyles } from '../../assets/constants/styles';
+import { GlobalStyles } from "../assets/constants/styles";
 import ExpensesList from './ExpensesList';
 import ExpensesSummary from './ExpensesSummary';
 

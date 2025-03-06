@@ -8,7 +8,7 @@ import RecentExpenses from './screens/RecentExpenses';
 import AllExpenses from './screens/AllExpenses';
 import { GlobalStyles } from './assets/constants/styles';
 import { Ionicons } from '@expo/vector-icons';
-import IconButton from './screens/components/IconButton';
+import IconButton from './components/IconButton';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
