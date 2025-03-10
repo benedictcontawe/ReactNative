@@ -4,6 +4,7 @@ import IconButton from '../components/IconButton';
 import { GlobalStyles } from '../assets/constants/styles';
 import CustomButton from '../components/CustomButton';
 import { ExpensesContext } from '../store/expenses-context';
+import ExpenseForm from '../components/ExpenseForm';
 
 const ManageExpense = ({ route, navigation }) => {
     const expenseCtx = useContext(ExpensesContext);
@@ -45,24 +46,25 @@ const ManageExpense = ({ route, navigation }) => {
     }
 
     return <View style = { styles.container } >
-    <View style={styles.buttons} >
-        <CustomButton style={styles.button} mode={'flat'} onPress={cancelHandler}>
-            Cancel
-        </CustomButton>
-        <CustomButton style={styles.button} onPress={confirmHandler}>
-            { isEditing ? 'Update' : 'Add' }
-        </CustomButton>
-    </View>
-    { isEditing && 
-        <View style = { styles.deleteContainer } >
-            <IconButton 
-                icon='trash' 
-                color={GlobalStyles.colors.error50}
-                size={ 36 }
-                onPress={ deleteExpenseHandler }
-            /> 
+        <ExpenseForm />
+        <View style={styles.buttons} >
+            <CustomButton style={styles.button} mode={'flat'} onPress={cancelHandler}>
+                Cancel
+            </CustomButton>
+            <CustomButton style={styles.button} onPress={confirmHandler}>
+                { isEditing ? 'Update' : 'Add' }
+            </CustomButton>
         </View>
-    }    
+        { isEditing && 
+            <View style = { styles.deleteContainer } >
+                <IconButton 
+                    icon='trash' 
+                    color={GlobalStyles.colors.error50}
+                    size={ 36 }
+                    onPress={ deleteExpenseHandler }
+                /> 
+            </View>
+        }    
     </View>
 }
 
