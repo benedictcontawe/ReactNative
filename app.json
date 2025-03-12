@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "AuthenticationApp",
-    "slug": "AuthenticationApp",
+    "name": "HardwareApp",
+    "slug": "HardwareApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
