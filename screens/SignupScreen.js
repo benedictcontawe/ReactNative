@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import AuthContent from "../components/AuthContent";
 import { createUser } from '../util/auth';
 import { AuthContext } from '../store/auth-context';

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Alert } from "react-native";
 import AuthContent from "../components/AuthContent";
-import { AuthContext } from '../store/auth-context';
+import { AuthContext } from "../store/auth-context";
 import LoadingOverlay from "../components/LoadingOverlay";
 import { login } from "../util/auth";
 
