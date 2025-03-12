@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native'
+import CustomButton from '../components/CustomButton';
 import InputComponent from './InputComponent'
+import { getFormattedDate } from '../util/date';
 
-function ExpenseForm() {
+function ExpenseForm( {submitButtonLabel, onCancel, onSubmit, defaultValues} ) {
 
   const[inputValues, setInputValues] = useState({
-    amount: '',
-    date: '',
-    description: '',
+    amount: defaultValues ? defaultValues.amount.toString() : '',
+    date: defaultValues ? getFormattedDate(defaultValues.date) : '',
+    description: defaultValues ? defaultValues.description : '',
   });
 
   function inputChangedHandler(inputIdentifier, enteredValue) {
@@ -16,6 +19,15 @@ function ExpenseForm() {
         [inputIdentifier]: enteredValue
       };
     })
+  }
+
+  function submitHandler() {
+    const expenseData = {
+      amount: +inputValues.amount,
+      date: new Date(inputValues.date),
+      description: inputValues.description,
+    }
+    onSubmit(expenseData);
   }
  
   return (
@@ -47,9 +59,19 @@ function ExpenseForm() {
         textInputConfig={{
           multiline: true,
           autoCapitalize: 'none',
-          autoCorrect: true //default is true
+          autoCorrect: true,//default is true
+          onChangeText: inputChangedHandler.bind(this, 'description'),
+          value: inputValues.description,
         }}
       />
+      <View style={styles.buttons} >
+            <CustomButton style={styles.button} mode={'flat'} onPress={onCancel}>
+                Cancel
+            </CustomButton>
+            <CustomButton style={styles.button} onPress={submitHandler}>
+              {submitButtonLabel}
+            </CustomButton>
+        </View>
     </View>
   )
 }
@@ -73,5 +95,14 @@ const styles = StyleSheet.create({
   },
   rowInput: {
     flex: 1,
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+      minWidth: 120,
+      marginHorizontal: 8,
   },
 });
