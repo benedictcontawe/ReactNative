@@ -10,7 +10,7 @@ Notifications.setNotificationHandler({
       shouldSetBadge: false,
       shouldShowAlert: true,
     };
-  }
+  },
 });
 
 export default function App() {
@@ -19,10 +19,10 @@ export default function App() {
       const { status } = await Notifications.getPermissionsAsync();
       let finalStatus = status;
       if (finalStatus !== 'granted') {
-        const { status } = Notifications.requestPermissionsAsync();
+        const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
-      if(finalStatus !== 'granted') {
+      if (finalStatus !== 'granted') {
         Alert.alert(
           'Permission required',
           'Push notifications need the appropriate permissions.'
@@ -30,28 +30,28 @@ export default function App() {
         return;
       }
       const pushTokenData = await Notifications.getExpoPushTokenAsync();
-      console.log(pushTokenData)
-      if(Platform.OS === 'android') {
+      console.log(pushTokenData);
+      if (Platform.OS === 'android') {
         Notifications.setNotificationChannelAsync('default', {
           name: 'default',
-          importance: Notifications.AndroidImportance.DEFAULT
-        })
+          importance: Notifications.AndroidImportance.DEFAULT,
+        });
       }
     }
     configurePushNotifications();
-  }, [])
+  }, []);
   useEffect(() => {
     const subscription1 = Notifications.addNotificationReceivedListener((notification) => {
       console.log('Notification Received');
-      console.log(notification)
+      console.log(notification);
       const userName = notification.request.content.data.userName;
-      console.log(userName)
+      console.log(userName);
     });
     const subscription2 = Notifications.addNotificationResponseReceivedListener((response) => {
       console.log('Notification Response Received');
-      console.log(response)
-      const userName = notification.request.content.data.userName;
-      console.log(userName)
+      console.log(response);
+      const userName = response.notification.request.content.data.userName;
+      console.log(userName);
     });
     return () => {
       subscription1.remove();
@@ -60,13 +60,13 @@ export default function App() {
   }, []);
   function scheduleNotificationHandler() {
     Notifications.scheduleNotificationAsync({
-      content: { 
-        title: 'My first local notification', 
+      content: {
+        title: 'My first local notification',
         body: 'This is the body of the notification.',
         data: { userName: 'Max' },
       },
       trigger: {
-        seconds: 5
+        seconds: 5,
       },
     });
   }
@@ -85,8 +85,14 @@ export default function App() {
   }
   return (
     <View style={styles.container}>
-      <Button title='Schedule Notification' onPress={scheduleNotificationHandler}></Button>
-      <Button title='Send Push Notification' onPress={sendPushNotificationHandler}></Button>
+      <Button
+        title="Schedule Notification"
+        onPress={scheduleNotificationHandler}
+      />
+      <Button
+        title="Send Push Notification"
+        onPress={sendPushNotificationHandler}
+      />
       <StatusBar style="auto" />
     </View>
   );
