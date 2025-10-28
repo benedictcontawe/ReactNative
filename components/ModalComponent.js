@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
     color: '#BCBCBC', 
   },
   modalPositiveButton: {
+    alignSelf: 'center',
     backgroundColor: '#D4AF37', 
     padding: 10,
     borderRadius: 15,
@@ -128,14 +129,17 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    width: '80%',
   },
   modalNegativeButton: {
+    alignSelf: 'center',
     backgroundColor: 'transparent',
     borderWidth: 2,
     borderColor: '#D4AF37',        
     padding: 10,
     borderRadius: 15,
     marginBottom: 10,
+    width: '80%',
   },
   positiveButtonText: {
     color: 'white', 
