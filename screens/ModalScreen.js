@@ -15,7 +15,7 @@ const ModalScreen = () => {
       <Text style={styles.text}>Modal Screen</Text>
       <Button title="Show Modal" onPress={handleShowModal} />
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={modalVisible} 
         onRequestClose={handleCloseModal}
@@ -28,10 +28,16 @@ const ModalScreen = () => {
             >
               <Text style={styles.closeButtonText}>x</Text>
             </TouchableOpacity>
-            <Text style={styles.modalTitle}>Hello from the Modal!</Text>
+            <Text style={styles.modalTitle}>Title Modal</Text>
             <Text style={styles.modalBody}>
-              This content is visible because the 'modalVisible' state is set to true.
+              Body Content
             </Text>
+            <TouchableOpacity style={styles.modalPositiveButton} onPress={()=>{}}>
+                <Text style={styles.positiveButtonText}>Yes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.modalNegativeButton} onPress={handleCloseModal}>
+                <Text style={styles.negativeButtonText}>No</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -50,30 +56,34 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
+    color: '#0055a4',
   },
   modalCenteredView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 22,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent overlay
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   modalView: {
+    position: 'relative', 
     margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 35,
-    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 1)',
+    borderRadius: 15,
+    overflow: 'hidden', 
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 8,
-    width: '80%',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 12,
+    width: '85%',
+    padding: 30,
+    paddingRight: 40,
   },
   closeButton: {
     position: 'absolute', 
@@ -83,28 +93,59 @@ const styles = StyleSheet.create({
     width: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#e0e0e0',
-    borderRadius: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 0, 
     zIndex: 10,
   },
   closeButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#000',
   },
   modalTitle: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: '800',
     marginBottom: 15,
     textAlign: 'center',
-    color: '#1e90ff',
+    color: '#111111', 
   },
   modalBody: {
     fontSize: 16,
     marginBottom: 25,
     textAlign: 'center',
-    color: '#555',
+    color: '#444444', 
   },
+  modalPositiveButton: {
+    backgroundColor: '#D4AF37', 
+    padding: 10,
+    borderRadius: 15,
+    marginBottom: 10,
+    shadowColor: '#000000',
+    shadowOffset: {
+        width: 0,
+        height: 10,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  modalNegativeButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#D4AF37',        
+    padding: 10,
+    borderRadius: 15,
+    marginBottom: 10,
+  },
+  positiveButtonText: {
+    color: 'white', 
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  negativeButtonText: {
+        color: '#D4AF37',
+        textAlign: 'center',
+        fontWeight: 'bold',
+    },
 });
 
 export default ModalScreen;
