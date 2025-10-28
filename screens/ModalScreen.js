@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Button, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { Button, Modal, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { BlurView } from 'expo-blur';
 
 const ModalScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -22,22 +23,28 @@ const ModalScreen = () => {
       >
         <View style={styles.modalCenteredView}>
           <View style={styles.modalView}>
+            <BlurView
+                style={styles.absoluteBlur}
+                blurType="light"
+                blurAmount={Platform.OS === 'ios' ? 10 : 8}
+                reducedTransparencyFallbackColor="white"
+            />
             <TouchableOpacity 
-              style={styles.closeButton} 
-              onPress={handleCloseModal}
+                style={styles.closeButton} 
+                onPress={handleCloseModal}
             >
-              <Text style={styles.closeButtonText}>x</Text>
+                <Text style={styles.closeButtonText}>x</Text>
             </TouchableOpacity>
-            <Text style={styles.modalTitle}>Title Modal</Text>
-            <Text style={styles.modalBody}>
-              Body Content
-            </Text>
-            <TouchableOpacity style={styles.modalPositiveButton} onPress={()=>{}}>
-                <Text style={styles.positiveButtonText}>Yes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalNegativeButton} onPress={handleCloseModal}>
-                <Text style={styles.negativeButtonText}>No</Text>
-            </TouchableOpacity>
+            <View style={styles.modalContentWrapper}> 
+                <Text style={styles.modalTitle}>Title Modal</Text>
+                <Text style={styles.modalBody}>Body Content</Text>
+                <TouchableOpacity style={styles.modalPositiveButton} onPress={()=>{}}>
+                    <Text style={styles.positiveButtonText}>Yes</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.modalNegativeButton} onPress={handleCloseModal}>
+                    <Text style={styles.negativeButtonText}>No</Text>
+                </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -50,13 +57,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f4f8',
+    backgroundColor: '#f0a057',
   },
   headerText: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#0055a4',
+  },
+  absoluteBlur: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)', 
+  },
+  modalContentWrapper: {
+    padding: 30,
+    paddingRight: 45,
+    backgroundColor: 'rgba(255, 255, 255, 0.01)',
   },
   modalCenteredView: {
     flex: 1,
@@ -66,24 +86,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   modalView: {
-    position: 'relative', 
+    position: 'relative',
     margin: 20,
-    backgroundColor: 'rgba(255, 255, 255, 1)',
+    backgroundColor: 'transparent',
     borderRadius: 15,
-    overflow: 'hidden', 
+    overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.4)',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 12,
     width: '85%',
-    padding: 30,
-    paddingRight: 40,
   },
   closeButton: {
     position: 'absolute', 
@@ -93,27 +103,27 @@ const styles = StyleSheet.create({
     width: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    borderRadius: 0, 
+    backgroundColor: 'transparent',
+    borderRadius: 0,
     zIndex: 10,
   },
   closeButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#B3B3B3',
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: '800',
     marginBottom: 15,
     textAlign: 'center',
-    color: '#111111', 
+    color: '#FFF', 
   },
   modalBody: {
     fontSize: 16,
     marginBottom: 25,
     textAlign: 'center',
-    color: '#444444', 
+    color: '#BCBCBC', 
   },
   modalPositiveButton: {
     backgroundColor: '#D4AF37', 
