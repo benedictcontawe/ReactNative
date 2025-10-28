@@ -11,7 +11,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <BottomTab.Navigator
-      initialRouteName="Modal"
+      initialRouteName="Home"
      >
         <BottomTab.Screen name="Home" component={HomeScreen} />
         <BottomTab.Screen name='Modal' component={ModalScreen} />
