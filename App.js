@@ -11,8 +11,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <BottomTab.Navigator
-      initialRouteName="Home"
-     >
+            initialRouteName="Home" >
         <BottomTab.Screen name="Home" component={HomeScreen} />
         <BottomTab.Screen name='Modal' component={ModalScreen} />
         <BottomTab.Screen name="Settings" component={SettingsScreen} />
@@ -20,8 +19,6 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
