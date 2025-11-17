@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "BottomTabApp",
-    "slug": "BottomTabApp",
+    "name": "CameraApp",
+    "slug": "CameraApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
