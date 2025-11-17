@@ -21,13 +21,9 @@ function HomeScreen() {
   const navigation = useNavigation();
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
-  const handleImagePress = () => {
-    setBottomSheetVisible(true);
-  };
+  const handleImagePress = () => setBottomSheetVisible(true);
 
-  const handleClose = () => {
-    setBottomSheetVisible(false);
-  };
+  const handleClose = () => setBottomSheetVisible(false);
 
   const handleTakePhoto = () => {
     handleClose();
@@ -72,7 +68,7 @@ function HomeScreen() {
         <View style={styles.modalOverlay}>
           <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
           <View style={styles.bottomSheet}>
-            <Text style={styles.bottomSheetTitle}>Camera X</Text>
+            <Text style={styles.bottomSheetTitle}>Camera Expo</Text>
             
             <TouchableOpacity
               style={styles.bottomSheetButton}
