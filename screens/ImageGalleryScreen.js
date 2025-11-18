@@ -12,11 +12,13 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePicker } from '../utils/imagePicker';
 import { Routes } from '../constants/routes';
+import { useTheme } from '../constants/theme';
 
 const { width } = Dimensions.get('window');
 const imageSize = (width - 60) / 3; // 3 columns with padding
 
 export default function ImageGalleryScreen() {
+  const theme = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
   const [images, setImages] = useState([]);
@@ -114,39 +116,39 @@ export default function ImageGalleryScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.backgroundSecondary }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.colors.headerBackground }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backButton}>← Back</Text>
+          <Text style={[styles.backButton, { color: theme.colors.headerText }]}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Image Gallery</Text>
+        <Text style={[styles.headerTitle, { color: theme.colors.headerText }]}>Image Gallery</Text>
         <TouchableOpacity onPress={clearAllImages}>
-          <Text style={styles.clearButton}>Clear</Text>
+          <Text style={[styles.clearButton, { color: theme.colors.buttonDanger }]}>Clear</Text>
         </TouchableOpacity>
       </View>
 
       {/* Action Buttons */}
-      <View style={styles.actionButtons}>
+      <View style={[styles.actionButtons, { backgroundColor: theme.colors.backgroundTertiary }]}>
         <TouchableOpacity
-          style={[styles.actionButton, styles.pickSingleButton]}
+          style={[styles.actionButton, { backgroundColor: theme.colors.buttonPrimary }]}
           onPress={pickSingleImage}
         >
-          <Text style={styles.actionButtonText}>📷 Pick One</Text>
+          <Text style={[styles.actionButtonText, { color: theme.colors.buttonText }]}>📷 Pick One</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.actionButton, styles.pickMultipleButton]}
+          style={[styles.actionButton, { backgroundColor: theme.colors.buttonSuccess }]}
           onPress={pickMultipleImages}
         >
-          <Text style={styles.actionButtonText}>🖼️ Pick Multiple</Text>
+          <Text style={[styles.actionButtonText, { color: theme.colors.buttonText }]}>🖼️ Pick Multiple</Text>
         </TouchableOpacity>
       </View>
 
       {/* Image Grid */}
       {images.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No images yet</Text>
-          <Text style={styles.emptySubtext}>
+          <Text style={[styles.emptyText, { color: theme.colors.text }]}>No images yet</Text>
+          <Text style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}>
             Use the buttons above to add images from your gallery
           </Text>
         </View>
@@ -155,15 +157,15 @@ export default function ImageGalleryScreen() {
           {images.map((image) => (
             <TouchableOpacity
               key={image.id}
-              style={styles.imageWrapper}
+              style={[styles.imageWrapper, { backgroundColor: theme.colors.backgroundTertiary }]}
               onPress={() => {
                 navigation.navigate(Routes.IMAGE_DETAIL, { imageUri: image.uri });
               }}
               onLongPress={() => removeImage(image.id)}
             >
               <Image source={{ uri: image.uri }} style={styles.image} />
-              <View style={styles.deleteOverlay}>
-                <Text style={styles.deleteText}>Long press to delete</Text>
+              <View style={[styles.deleteOverlay, { backgroundColor: theme.colors.overlayDark }]}>
+                <Text style={[styles.deleteText, { color: theme.colors.textInverse }]}>Long press to delete</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -176,29 +178,24 @@ export default function ImageGalleryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2a2a2a',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#000000',
     paddingTop: 10,
     paddingBottom: 15,
     paddingHorizontal: 20,
   },
   backButton: {
-    color: '#ffffff',
     fontSize: 16,
     fontWeight: '500',
   },
   headerTitle: {
-    color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
   },
   clearButton: {
-    color: '#ff4444',
     fontSize: 16,
     fontWeight: '500',
   },
@@ -206,7 +203,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 15,
-    backgroundColor: '#1a1a1a',
   },
   actionButton: {
     paddingVertical: 12,
@@ -215,14 +211,7 @@ const styles = StyleSheet.create({
     minWidth: 140,
     alignItems: 'center',
   },
-  pickSingleButton: {
-    backgroundColor: '#0066cc',
-  },
-  pickMultipleButton: {
-    backgroundColor: '#00aa44',
-  },
   actionButtonText: {
-    color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -233,13 +222,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   emptyText: {
-    color: '#ffffff',
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 10,
   },
   emptySubtext: {
-    color: '#aaaaaa',
     fontSize: 14,
     textAlign: 'center',
   },
@@ -254,7 +241,6 @@ const styles = StyleSheet.create({
     margin: 5,
     borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: '#1a1a1a',
   },
   image: {
     width: '100%',
@@ -266,11 +252,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     padding: 4,
   },
   deleteText: {
-    color: '#ffffff',
     fontSize: 10,
     textAlign: 'center',
   },

@@ -1,24 +1,26 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Routes } from './constants/routes';
-import HomeScreen from './components/HomeScreen'; // Corrected path
-import CameraScreen from './components/CameraScreen';
-import VideoScreen from './components/VideoScreen';
-import ImageGalleryScreen from './components/ImageGalleryScreen';
-import ImageDetailScreen from './components/ImageDetailScreen';
+import { useTheme } from './constants/theme';
+import HomeScreen from './screens/HomeScreen';
+import CameraScreen from './screens/CameraScreen';
+import VideoScreen from './screens/VideoScreen';
+import ImageGalleryScreen from './screens/ImageGalleryScreen';
+import ImageDetailScreen from './screens/ImageDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
 function Navigation() {
+  const theme = useTheme();
+  
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          headerStyle: { backgroundColor: '#000000' },
-          headerTintColor: 'white',
+          headerStyle: { backgroundColor: theme.colors.headerBackground },
+          headerTintColor: theme.colors.headerText,
         }}
       >
         <Stack.Screen 

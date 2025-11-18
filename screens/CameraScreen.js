@@ -6,15 +6,16 @@ import {
   TouchableOpacity,
   Alert,
   Image,
-  Platform,
   Dimensions,
 } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { ImagePicker } from '../utils/imagePicker';
 import { useNavigation } from '@react-navigation/native';
 import { Routes } from '../constants/routes';
+import { useTheme } from '../constants/theme';
 
 export default function CameraScreen() {
+  const theme = useTheme();
   const navigation = useNavigation();
   // Use CameraType.back if available, otherwise fallback to string 'back'
   const [facing, setFacing] = useState(() => {
@@ -37,16 +38,16 @@ export default function CameraScreen() {
 
   if (!permission) {
     // Camera permissions are still loading
-    return <View style={styles.container} />;
+    return <View style={[styles.container, { backgroundColor: theme.colors.backgroundSecondary }]} />;
   }
 
   if (!permission.granted) {
     // Camera permissions are not granted yet
     return (
-      <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
-        <TouchableOpacity style={styles.button} onPress={requestPermission}>
-          <Text style={styles.buttonText}>Grant Permission</Text>
+      <View style={[styles.container, { backgroundColor: theme.colors.backgroundSecondary }]}>
+        <Text style={[styles.message, { color: theme.colors.text }]}>We need your permission to show the camera</Text>
+        <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.buttonPrimary }]} onPress={requestPermission}>
+          <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Grant Permission</Text>
         </TouchableOpacity>
       </View>
     );
@@ -125,22 +126,22 @@ export default function CameraScreen() {
 
   if (capturedImage) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <Image source={{ uri: capturedImage }} style={styles.preview} />
-        <View style={styles.buttonContainer}>
+        <View style={[styles.buttonContainer, { backgroundColor: theme.colors.headerBackground }]}>
           <TouchableOpacity
-            style={[styles.button, styles.retakeButton]}
+            style={[styles.button, { backgroundColor: theme.colors.buttonSecondary }]}
             onPress={() => setCapturedImage(null)}
           >
-            <Text style={styles.buttonText}>Retake</Text>
+            <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Retake</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.button, styles.useButton]}
+            style={[styles.button, { backgroundColor: theme.colors.buttonPrimary }]}
             onPress={() => {
               navigation.navigate(Routes.HOME, { capturedImage });
             }}
           >
-            <Text style={styles.buttonText}>Use Photo</Text>
+            <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Use Photo</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -148,7 +149,7 @@ export default function CameraScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <CameraView
         ref={cameraRef}
         style={styles.camera}
@@ -162,7 +163,7 @@ export default function CameraScreen() {
             onPress={takePicture}
             activeOpacity={0.8}
           >
-            <View style={styles.shutterButtonOuter} />
+            <View style={[styles.shutterButtonOuter, { borderColor: theme.colors.border }]} />
           </TouchableOpacity>
           
           {/* Flip Button - Right side (85-95% width), aligned with shutter */}
@@ -171,7 +172,7 @@ export default function CameraScreen() {
             onPress={toggleCameraFacing}
             activeOpacity={0.8}
           >
-            <View style={styles.flipButtonBackground}>
+            <View style={[styles.flipButtonBackground, { borderColor: theme.colors.border }]}>
               <Text style={styles.flipButtonIcon}>🔄</Text>
             </View>
           </TouchableOpacity>
@@ -184,12 +185,10 @@ export default function CameraScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2a2a2a', // darker_gray equivalent
   },
   message: {
     textAlign: 'center',
     paddingBottom: 10,
-    color: '#fff',
     fontSize: 16,
   },
   camera: {
@@ -214,9 +213,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 999, // Fully circular
-    backgroundColor: '#ffffff', // Solid white button
+    backgroundColor: '#ffffff', // Solid white button (always white for camera)
     borderWidth: 4,
-    borderColor: '#e0e0e0', // Light gray border for definition
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -245,7 +243,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
   },
   flipButtonIcon: {
     fontSize: 24,
@@ -259,7 +256,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 20,
-    backgroundColor: '#000',
   },
   button: {
     paddingVertical: 12,
@@ -268,14 +264,7 @@ const styles = StyleSheet.create({
     minWidth: 120,
     alignItems: 'center',
   },
-  retakeButton: {
-    backgroundColor: '#666',
-  },
-  useButton: {
-    backgroundColor: '#0066cc',
-  },
   buttonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: '600',
   },

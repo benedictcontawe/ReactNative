@@ -8,36 +8,38 @@ import {
   Dimensions,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useTheme } from '../constants/theme';
 
 const { width, height } = Dimensions.get('window');
 
 export default function ImageDetailScreen() {
+  const theme = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
   const { imageUri } = route.params || {};
 
   if (!imageUri) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>No image to display</Text>
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <Text style={[styles.errorText, { color: theme.colors.text }]}>No image to display</Text>
         <TouchableOpacity
-          style={styles.button}
+          style={[styles.button, { backgroundColor: theme.colors.buttonPrimary }]}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.buttonText}>Go Back</Text>
+          <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Go Back</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
       <TouchableOpacity
-        style={styles.closeButton}
+        style={[styles.closeButton, { backgroundColor: theme.colors.overlayDark }]}
         onPress={() => navigation.goBack()}
       >
-        <Text style={styles.closeButtonText}>✕ Close</Text>
+        <Text style={[styles.closeButtonText, { color: theme.colors.textInverse }]}>✕ Close</Text>
       </TouchableOpacity>
     </View>
   );
@@ -46,7 +48,6 @@ export default function ImageDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -58,31 +59,25 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 50,
     right: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
   },
   closeButtonText: {
-    color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
   },
   errorText: {
-    color: '#ffffff',
     fontSize: 18,
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#0066cc',
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 25,
   },
   buttonText: {
-    color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
   },
 });
-

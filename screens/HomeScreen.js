@@ -4,7 +4,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Modal,
   Image,
   Pressable,
   Alert,
@@ -14,19 +13,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { ImagePicker, isAvailable } from '../utils/imagePicker';
 import { Routes } from '../constants/routes';
+import { useTheme } from '../constants/theme';
+import OptionBottomSheetModal from '../components/OptionBottomSheetModal';
 
 export default function HomeScreen() {
+  const theme = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [displayImage, setDisplayImage] = useState(null);
 
-  useEffect(() => {
-    // Check if an image was passed from navigation (from Camera or Gallery)
-    if (route.params?.capturedImage) {
+  useEffect(() => {  
+    if (route.params?.capturedImage) {//Check if an image was passed from navigation (from Camera or Gallery)
       setDisplayImage(route.params.capturedImage);
-      // Clear the params to avoid showing the same image on next visit
-      navigation.setParams({ capturedImage: undefined });
+      navigation.setParams({ capturedImage: undefined });//Clear the params to avoid showing the same image on next visit
     }
   }, [route.params]);
 
@@ -54,8 +54,7 @@ export default function HomeScreen() {
       return;
     }
     try {
-      // Request permissions
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();//Request permissions
       if (status !== 'granted') {
         Alert.alert(
           'Permission Required',
@@ -63,13 +62,12 @@ export default function HomeScreen() {
         );
         return;
       }
-      // Launch image picker
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,
-      });
+      });//Launch image picker
       if (!result.canceled && result.assets[0]) {
         setDisplayImage(result.assets[0].uri);
         Alert.alert('Success', 'Image selected from gallery!');
@@ -100,14 +98,14 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar style="light" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.backgroundSecondary }]} edges={['top']}>
+      <StatusBar style={theme.colors.statusBar} />
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>CameraApp</Text>
+      <View style={[styles.header, { backgroundColor: theme.colors.headerBackground }]}>
+        <Text style={[styles.headerText, { color: theme.colors.headerText }]}>CameraApp</Text>
       </View>
       {/* Main Content Area */}
-      <View style={styles.content}>
+      <View style={[styles.content, { backgroundColor: theme.colors.backgroundSecondary }]}>
         {displayImage ? (
           <View style={styles.imageDisplayContainer}>
             <Pressable onPress={handleImagePress} style={styles.imageContainer}>
@@ -119,16 +117,16 @@ export default function HomeScreen() {
             </Pressable>
             <View style={styles.imageActions}>
               <TouchableOpacity
-                style={styles.imageActionButton}
+                style={[styles.imageActionButton, { backgroundColor: theme.colors.buttonDanger }]}
                 onPress={handleClearImage}
               >
-                <Text style={styles.imageActionText}>Clear</Text>
+                <Text style={[styles.imageActionText, { color: theme.colors.buttonText }]}>Clear</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.imageActionButton}
+                style={[styles.imageActionButton, { backgroundColor: theme.colors.buttonPrimary }]}
                 onPress={handleViewGallery}
               >
-                <Text style={styles.imageActionText}>View Gallery</Text>
+                <Text style={[styles.imageActionText, { color: theme.colors.buttonText }]}>View Gallery</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -139,61 +137,18 @@ export default function HomeScreen() {
               style={styles.centerImage}
               resizeMode="contain"
             />
-            <Text style={styles.placeholderText}>Tap to open camera options</Text>
+            <Text style={[styles.placeholderText, { color: theme.colors.textSecondary }]}>Tap to open camera options</Text>
           </Pressable>
         )}
       </View>
-      {/* Bottom Sheet Modal */}
-      <Modal
+      <OptionBottomSheetModal
         visible={bottomSheetVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={handleClose}
-      >
-        <View style={styles.modalOverlay}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
-          <View style={styles.bottomSheet}>
-            <Text style={styles.bottomSheetTitle}>Camera Expo</Text>
-            
-            <TouchableOpacity
-              style={styles.bottomSheetButton}
-              onPress={handleTakePhoto}
-            >
-              <Text style={styles.buttonText}>Take Photo</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.bottomSheetButton}
-              onPress={handleRecordVideo}
-            >
-              <Text style={styles.buttonText}>Record Video</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.bottomSheetButton}
-              onPress={handleChoosePhoto}
-            >
-              <Text style={styles.buttonText}>Choose Photo</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.bottomSheetButton}
-              onPress={handleViewGallery}
-            >
-              <Text style={styles.buttonText}>View Gallery</Text>
-            </TouchableOpacity>
-
-            <View style={styles.separator} />
-
-            <TouchableOpacity
-              style={styles.bottomSheetButton}
-              onPress={handleClose}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+        onClose={handleClose}
+        onTakePhoto={handleTakePhoto}
+        onRecordVideo={handleRecordVideo}
+        onChoosePhoto={handleChoosePhoto}
+        onViewGallery={handleViewGallery}
+      />
     </SafeAreaView>
   );
 }
@@ -201,22 +156,18 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2a2a2a',
   },
   header: {
-    backgroundColor: '#000000',
     paddingTop: 10,
     paddingBottom: 15,
     paddingHorizontal: 20,
   },
   headerText: {
-    color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
   },
   content: {
     flex: 1,
-    backgroundColor: '#2a2a2a',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -247,64 +198,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   imageActionButton: {
-    backgroundColor: '#0066cc',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
     marginHorizontal: 7.5,
   },
   imageActionText: {
-    color: '#ffffff',
     fontSize: 14,
     fontWeight: '600',
   },
   placeholderText: {
-    color: '#aaaaaa',
     fontSize: 14,
     marginTop: 10,
     textAlign: 'center',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  bottomSheet: {
-    backgroundColor: '#ffffff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 20,
-    paddingBottom: 40,
-    paddingHorizontal: 20,
-  },
-  bottomSheetTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000000',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  bottomSheetButton: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    marginBottom: 12,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#0066cc',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#e0e0e0',
-    marginVertical: 8,
-  },
-  cancelButtonText: {
-    color: '#ff0000',
-    fontSize: 16,
-    fontWeight: '500',
   },
 });
