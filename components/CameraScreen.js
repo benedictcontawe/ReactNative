@@ -12,6 +12,7 @@ import {
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { ImagePicker } from '../utils/imagePicker';
 import { useNavigation } from '@react-navigation/native';
+import { Routes } from '../constants/routes';
 
 export default function CameraScreen() {
   const navigation = useNavigation();
@@ -77,7 +78,7 @@ export default function CameraScreen() {
               text: 'Use This Photo',
               onPress: () => {
                 // Navigate back with the image URI
-                navigation.navigate('Home', { capturedImage: photo.uri });
+                navigation.navigate(Routes.HOME, { capturedImage: photo.uri });
               },
             },
           ]
@@ -111,7 +112,7 @@ export default function CameraScreen() {
             {
               text: 'Use This Image',
               onPress: () => {
-                navigation.navigate('Home', { capturedImage: result.assets[0].uri });
+                navigation.navigate(Routes.HOME, { capturedImage: result.assets[0].uri });
               },
             },
           ]
@@ -136,7 +137,7 @@ export default function CameraScreen() {
           <TouchableOpacity
             style={[styles.button, styles.useButton]}
             onPress={() => {
-              navigation.navigate('Home', { capturedImage });
+              navigation.navigate(Routes.HOME, { capturedImage });
             }}
           >
             <Text style={styles.buttonText}>Use Photo</Text>

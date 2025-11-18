@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePicker } from '../utils/imagePicker';
+import { Routes } from '../constants/routes';
 
 const { width } = Dimensions.get('window');
 const imageSize = (width - 60) / 3; // 3 columns with padding
@@ -156,7 +157,7 @@ export default function ImageGalleryScreen() {
               key={image.id}
               style={styles.imageWrapper}
               onPress={() => {
-                navigation.navigate('ImageDetail', { imageUri: image.uri });
+                navigation.navigate(Routes.IMAGE_DETAIL, { imageUri: image.uri });
               }}
               onLongPress={() => removeImage(image.id)}
             >
@@ -274,4 +275,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
