@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,19 +7,34 @@ import {
   Modal,
   Image,
   Pressable,
+  Alert,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { ImagePicker, isAvailable } from './utils/imagePicker';
 import CameraScreen from './components/CameraScreen';
 import VideoScreen from './components/VideoScreen';
+import ImageGalleryScreen from './components/ImageGalleryScreen';
+import ImageDetailScreen from './components/ImageDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
 function HomeScreen() {
   const navigation = useNavigation();
+  const route = useRoute();
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+  const [displayImage, setDisplayImage] = useState(null);
+
+  useEffect(() => {
+    // Check if an image was passed from navigation (from Camera or Gallery)
+    if (route.params?.capturedImage) {
+      setDisplayImage(route.params.capturedImage);
+      // Clear the params to avoid showing the same image on next visit
+      navigation.setParams({ capturedImage: undefined });
+    }
+  }, [route.params]);
 
   const handleImagePress = () => setBottomSheetVisible(true);
 
@@ -35,10 +50,63 @@ function HomeScreen() {
     navigation.navigate('Video');
   };
 
-  const handleChoosePhoto = () => {
-    console.log('Choose Photo pressed');
+  const handleChoosePhoto = async () => {
     handleClose();
-    // Add your choose photo logic here
+    
+    if (!isAvailable) {
+      Alert.alert(
+        'Native Module Not Available',
+        'The image picker requires a development build with native modules. Please rebuild the app using:\n\nnpx expo run:android\n\nor\n\neas build --profile development --platform android'
+      );
+      return;
+    }
+    
+    try {
+      // Request permissions
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permission Required',
+          'We need access to your photo library to select images.'
+        );
+        return;
+      }
+
+      // Launch image picker
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        setDisplayImage(result.assets[0].uri);
+        Alert.alert('Success', 'Image selected from gallery!');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to pick image: ' + error.message);
+    }
+  };
+
+  const handleViewGallery = () => {
+    handleClose();
+    navigation.navigate('ImageGallery', { capturedImage: displayImage });
+  };
+
+  const handleClearImage = () => {
+    Alert.alert(
+      'Clear Image',
+      'Remove the displayed image?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear',
+          style: 'destructive',
+          onPress: () => setDisplayImage(null),
+        },
+      ]
+    );
   };
 
   return (
@@ -50,13 +118,40 @@ function HomeScreen() {
       </View>
       {/* Main Content Area */}
       <View style={styles.content}>
-        <Pressable onPress={handleImagePress} style={styles.imageContainer}>
-          <Image
-            source={require('./assets/icon.png')}
-            style={styles.centerImage}
-            resizeMode="contain"
-          />
-        </Pressable>
+        {displayImage ? (
+          <View style={styles.imageDisplayContainer}>
+            <Pressable onPress={handleImagePress} style={styles.imageContainer}>
+              <Image
+                source={{ uri: displayImage }}
+                style={styles.displayedImage}
+                resizeMode="contain"
+              />
+            </Pressable>
+            <View style={styles.imageActions}>
+              <TouchableOpacity
+                style={styles.imageActionButton}
+                onPress={handleClearImage}
+              >
+                <Text style={styles.imageActionText}>Clear</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.imageActionButton}
+                onPress={handleViewGallery}
+              >
+                <Text style={styles.imageActionText}>View Gallery</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <Pressable onPress={handleImagePress} style={styles.imageContainer}>
+            <Image
+              source={require('./assets/icon.png')}
+              style={styles.centerImage}
+              resizeMode="contain"
+            />
+            <Text style={styles.placeholderText}>Tap to open camera options</Text>
+          </Pressable>
+        )}
       </View>
       {/* Bottom Sheet Modal */}
       <Modal
@@ -91,6 +186,13 @@ function HomeScreen() {
               <Text style={styles.buttonText}>Choose Photo</Text>
             </TouchableOpacity>
 
+            <TouchableOpacity
+              style={styles.bottomSheetButton}
+              onPress={handleViewGallery}
+            >
+              <Text style={styles.buttonText}>View Gallery</Text>
+            </TouchableOpacity>
+
             <View style={styles.separator} />
 
             <TouchableOpacity
@@ -122,6 +224,16 @@ function Navigation() {
         />
         <Stack.Screen name="Camera" component={CameraScreen} />
         <Stack.Screen name="Video" component={VideoScreen} />
+        <Stack.Screen 
+          name="ImageGallery" 
+          component={ImageGalleryScreen}
+          options={{ title: 'Image Gallery' }}
+        />
+        <Stack.Screen 
+          name="ImageDetail" 
+          component={ImageDetailScreen}
+          options={{ title: 'Image Detail', headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -166,6 +278,40 @@ const styles = StyleSheet.create({
   centerImage: {
     width: 150,
     height: 150,
+  },
+  imageDisplayContainer: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  displayedImage: {
+    width: 300,
+    height: 300,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  imageActions: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  imageActionButton: {
+    backgroundColor: '#0066cc',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginHorizontal: 7.5,
+  },
+  imageActionText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  placeholderText: {
+    color: '#aaaaaa',
+    fontSize: 14,
+    marginTop: 10,
+    textAlign: 'center',
   },
   modalOverlay: {
     flex: 1,
