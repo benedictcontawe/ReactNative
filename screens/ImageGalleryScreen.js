@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePicker } from '../utils/imagePicker';
@@ -71,6 +72,7 @@ export default function ImageGalleryScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const [images, setImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     ( async () => { 
@@ -100,6 +102,7 @@ export default function ImageGalleryScreen() {
   }, [route.params]);
 
   const pickMultipleImages = async () => {
+    setIsLoading(true);
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -167,10 +170,13 @@ export default function ImageGalleryScreen() {
     } catch (error) {
       console.error('Error picking multiple images:', error);
       Alert.alert('Error', 'Failed to pick images: ' + error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const pickSingleImage = async () => {
+    setIsLoading(true);
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -220,6 +226,8 @@ export default function ImageGalleryScreen() {
     } catch (error) {
       console.error('Error picking single image:', error);
       Alert.alert('Error', 'Failed to pick image: ' + error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -272,16 +280,34 @@ export default function ImageGalleryScreen() {
       {/* Action Buttons */}
       <View style={[styles.actionButtons, { backgroundColor: theme.colors.backgroundTertiary }]}>
         <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: theme.colors.buttonPrimary }]}
+          style={[
+            styles.actionButton, 
+            { backgroundColor: theme.colors.buttonPrimary },
+            isLoading && styles.actionButtonDisabled
+          ]}
           onPress={pickSingleImage}
+          disabled={isLoading}
         >
-          <Text style={[styles.actionButtonText, { color: theme.colors.buttonText }]}>📷 Pick One</Text>
+          { isLoading ? (
+            <ActivityIndicator size="small" color={theme.colors.buttonText} />
+          ) : (
+            <Text style={[styles.actionButtonText, { color: theme.colors.buttonText }]}>📷 Pick One</Text>
+          )}
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: theme.colors.buttonSuccess }]}
+          style={[
+            styles.actionButton, 
+            { backgroundColor: theme.colors.buttonSuccess },
+            isLoading && styles.actionButtonDisabled
+          ]}
           onPress={pickMultipleImages}
+          disabled={isLoading}
         >
-          <Text style={[styles.actionButtonText, { color: theme.colors.buttonText }]}>🖼️ Pick Multiple</Text>
+          { isLoading ? (
+            <ActivityIndicator size="small" color={theme.colors.buttonText} />
+          ) : (
+            <Text style={[styles.actionButtonText, { color: theme.colors.buttonText }]}>🖼️ Pick Multiple</Text>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -355,6 +381,9 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  actionButtonDisabled: {
+    opacity: 0.6,
   },
   emptyContainer: {
     flex: 1,
