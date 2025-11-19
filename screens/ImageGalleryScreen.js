@@ -15,7 +15,56 @@ import { Routes } from '../constants/routes';
 import { useTheme } from '../constants/theme';
 
 const { width } = Dimensions.get('window');
-const imageSize = (width - 60) / 3; // 3 columns with padding
+const imageSize = (width - 60) / 3; //3 columns with padding
+/**
+ * Normalizes a URI by removing query parameters and fragments for consistent comparison.
+ * @param {string} uri - The URI to normalize
+ * @returns {string} The normalized URI without query parameters and fragments, or empty string if uri is falsy
+ * @description Helper function to normalize URI for comparison. Removes query parameters and fragments.
+ */
+const normalizeUri = (uri) => {
+  if (!uri) return '';
+  return uri.split('?')[0].split('#')[0].trim();
+};
+/**
+ * Creates a unique key from image metadata for duplicate detection.
+ * @param {Object} asset - The image asset object from ImagePicker
+ * @param {string} [asset.fileName] - The file name of the image
+ * @param {number} [asset.fileSize] - The file size of the image in bytes
+ * @returns {string} A unique key in the format "fileName_fileSize"
+ * @description Helper function to create a unique key from image metadata. Uses fileName + fileSize as unique identifier since URIs change each time the image picker creates temporary cache files.
+ */
+const getImageKey = (asset) => {
+  const fileName = asset?.fileName || '';
+  const fileSize = asset?.fileSize || 0;
+  return `${fileName}_${fileSize}`;
+};
+/**
+ * Checks if an image already exists in the gallery using unified duplicate detection.
+ * Handles both camera images (URI-based) and picked images (imageKey-based).
+ * @param {Array<Object>} existingImages - Array of existing image objects in the gallery
+ * @param {Object} newImage - The new image object to check
+ * @param {string} newImage.uri - The URI of the new image
+ * @param {string|null} [newImageKey=null] - The imageKey (fileName_fileSize) of the new image, if available
+ * @param {string|null} [newImageUri=null] - The URI of the new image (alternative to newImage.uri)
+ * @returns {boolean} True if the image is a duplicate, false otherwise
+ * @description Unified function to check if an image already exists in the gallery. 
+ * First checks by imageKey (for picked images with fileName + fileSize), 
+ * then falls back to normalized URI comparison (for camera images or when imageKey is not available).
+ */
+const isImageDuplicate = (existingImages, newImage, newImageKey = null, newImageUri = null) => {
+  const normalizedNewUri = normalizeUri(newImageUri || newImage.uri);
+  return existingImages.some(img => { // Check by imageKey (for picked images with fileName + fileSize)
+    if (newImageKey && img.imageKey && newImageKey === img.imageKey) {
+      return true;
+    }    
+    const normalizedExistingUri = normalizeUri(img.uri);// Check by normalized URI (for camera images or when imageKey is not available)
+    if (normalizedExistingUri === normalizedNewUri) {
+      return true;
+    }    
+    return false;
+  });
+};
 
 export default function ImageGalleryScreen() {
   const theme = useTheme();
@@ -36,8 +85,16 @@ export default function ImageGalleryScreen() {
 
     if (route.params?.capturedImage) {// If an image was passed from navigation, add it to the gallery
       setImages(prevImages => { // Use a function to ensure we don't add duplicates if the user navigates back and forth
-        const imageExists = prevImages.some(img => img.uri === route.params.capturedImage);
-        return imageExists ? prevImages : [{ uri: route.params.capturedImage, id: Date.now() }, ...prevImages];
+        const capturedImage = route.params.capturedImage;
+        const capturedImageKey = route.params.capturedImageKey || null; // Get imageKey if provided
+        const imageExists = isImageDuplicate(prevImages, { uri: capturedImage }, capturedImageKey, capturedImage);
+        return imageExists ? prevImages : [{ 
+          uri: capturedImage, 
+          id: Date.now(),
+          imageKey: capturedImageKey, // Store imageKey if available
+          fileName: route.params.capturedFileName || null,
+          fileSize: route.params.capturedFileSize || null,
+        }, ...prevImages];
       });
     }
   }, [route.params]);
@@ -49,15 +106,66 @@ export default function ImageGalleryScreen() {
         allowsMultipleSelection: true,
         quality: 0.8,
       });
-
+      console.log('=== PICK MULTIPLE IMAGES DEBUG ===');
+      console.log('Full result:', JSON.stringify(result, null, 2));
       if (!result.canceled && result.assets) {
-        const newImages = result.assets.map((asset, index) => ({
-          uri: asset.uri,
-          id: Date.now() + index,
-        }));
-        setImages(prev => [...prev, ...newImages]);
+        setImages(prev => {
+          console.log('Current gallery images count:', prev.length);
+          console.log('Current gallery image keys:', prev.map(img => img.imageKey || 'no-key'));          
+          // Create a Set of existing image keys for comparison (for previously picked images)
+          const existingKeys = new Set(prev.map(img => img.imageKey).filter(Boolean));
+          console.log('Existing image keys:', Array.from(existingKeys));          
+          // Also create a Set of normalized URIs for camera images (images without imageKey)
+          const existingCameraUris = new Set(
+            prev
+              .filter(img => !img.imageKey) // Only camera images (no imageKey)
+              .map(img => normalizeUri(img.uri))
+          );
+          console.log('Existing camera image URIs (normalized):', Array.from(existingCameraUris));          
+          // Filter out duplicates: both from existing gallery and within the new selection
+          const seenKeys = new Set(existingKeys);
+          const seenUris = new Set(existingCameraUris);
+          const newImages = [];          
+          console.log('Selected assets count:', result.assets.length);
+          for (const asset of result.assets) {
+            const imageKey = getImageKey(asset);
+            const normalizedAssetUri = normalizeUri(asset.uri);
+            console.log('Asset fileName:', asset.fileName);
+            console.log('Asset fileSize:', asset.fileSize);
+            console.log('Asset imageKey:', imageKey);
+            console.log('Asset URI (normalized):', normalizedAssetUri);            
+            // Check if duplicate: against existing gallery OR within current selection
+            const isDuplicateInGallery = isImageDuplicate(prev, asset, imageKey, asset.uri);
+            const isDuplicateInSelection = seenKeys.has(imageKey) || seenUris.has(normalizedAssetUri);
+            const isDuplicate = isDuplicateInGallery || isDuplicateInSelection;
+            console.log('Is duplicate in gallery?', isDuplicateInGallery);
+            console.log('Is duplicate in selection?', isDuplicateInSelection);
+            console.log('Is duplicate?', isDuplicate);            
+            if (!isDuplicate) {
+              seenKeys.add(imageKey);
+              seenUris.add(normalizedAssetUri);
+              newImages.push({
+                uri: asset.uri,
+                id: Date.now() + newImages.length,
+                imageKey: imageKey,
+                fileName: asset.fileName,
+                fileSize: asset.fileSize,
+              });
+              console.log('✓ Added to newImages');
+            } else {
+              console.log('✗ Skipped (duplicate)');
+            }
+          }          
+          console.log('New images to add:', newImages.length);
+          console.log('Final gallery size will be:', prev.length + newImages.length);
+          console.log('=== END PICK MULTIPLE DEBUG ===\n');          
+          return newImages.length > 0 ? [...prev, ...newImages] : prev;
+        });
+      } else {
+        console.log('User canceled or no assets');
       }
     } catch (error) {
+      console.error('Error picking multiple images:', error);
       Alert.alert('Error', 'Failed to pick images: ' + error.message);
     }
   };
@@ -70,14 +178,47 @@ export default function ImageGalleryScreen() {
         aspect: [4, 3],
         quality: 0.8,
       });
+      console.log('=== PICK SINGLE IMAGE DEBUG ===');
+      console.log('Full result:', JSON.stringify(result, null, 2));
 
       if (!result.canceled && result.assets[0]) {
-        const imageUri = result.assets[0].uri;
-        setImages(prev => [
-          { uri: imageUri, id: Date.now() }, ...prev
-        ]);
+        const asset = result.assets[0];
+        const imageUri = asset.uri;
+        const imageKey = getImageKey(asset);        
+        console.log('Selected image URI:', imageUri);
+        console.log('Selected image fileName:', asset.fileName);
+        console.log('Selected image fileSize:', asset.fileSize);
+        console.log('Selected imageKey:', imageKey);        
+        setImages(prev => {
+          console.log('Current gallery images count:', prev.length);
+          console.log('Current gallery image keys:', prev.map(img => img.imageKey || 'no-key'));
+          console.log('Current gallery URIs:', prev.map(img => img.uri));          
+          const normalizedAssetUri = normalizeUri(imageUri);
+          console.log('Selected image URI (normalized):', normalizedAssetUri);          
+          // Check if image already exists using unified duplicate detection
+          const imageExists = isImageDuplicate(prev, asset, imageKey, imageUri);
+          console.log('Image already exists?', imageExists);
+          if (imageExists) {
+            console.log('✗ Skipped (duplicate)');
+            console.log('=== END PICK SINGLE DEBUG ===\n');
+            return prev;
+          }          
+          console.log('✓ Adding new image');
+          console.log('Final gallery size will be:', prev.length + 1);
+          console.log('=== END PICK SINGLE DEBUG ===\n');
+          return [{ 
+            uri: imageUri, 
+            id: Date.now(),
+            imageKey: imageKey,
+            fileName: asset.fileName,
+            fileSize: asset.fileSize,
+          }, ...prev];
+        });
+      } else {
+        console.log('User canceled or no asset');
       }
     } catch (error) {
+      console.error('Error picking single image:', error);
       Alert.alert('Error', 'Failed to pick image: ' + error.message);
     }
   };

@@ -22,6 +22,7 @@ export default function HomeScreen() {
   const route = useRoute();
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [displayImage, setDisplayImage] = useState(null);
+  const [displayImageMetadata, setDisplayImageMetadata] = useState(null); // Store fileName and fileSize
 
   useEffect(() => {  
     if (route.params?.capturedImage) {//Check if an image was passed from navigation (from Camera or Gallery)
@@ -69,8 +70,13 @@ export default function HomeScreen() {
         quality: 0.8,
       });//Launch image picker
       if (!result.canceled && result.assets[0]) {
-        const imageUri = result.assets[0].uri;
+        const asset = result.assets[0];
+        const imageUri = asset.uri;
         setDisplayImage(imageUri);
+        setDisplayImageMetadata({// Store metadata for duplicate detection
+          fileName: asset.fileName,
+          fileSize: asset.fileSize,
+        });
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to pick image: ' + error.message);
@@ -86,7 +92,10 @@ export default function HomeScreen() {
         {
           text: 'Clear',
           style: 'destructive',
-          onPress: () => setDisplayImage(null),
+          onPress: () => {
+            setDisplayImage(null);
+            setDisplayImageMetadata(null);
+          },
         },
       ]
     );
@@ -124,7 +133,14 @@ export default function HomeScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.imageActionButton, { backgroundColor: theme.colors.buttonPrimary }]}
-                onPress={() => navigation.navigate(Routes.IMAGE_GALLERY, { capturedImage: displayImage })}
+                onPress={() => { //Pass image metadata for proper duplicate detection
+                  navigation.navigate(Routes.IMAGE_GALLERY, { 
+                    capturedImage: displayImage,
+                    capturedImageKey: displayImageMetadata ? `${displayImageMetadata.fileName}_${displayImageMetadata.fileSize}` : null,
+                    capturedFileName: displayImageMetadata?.fileName || null,
+                    capturedFileSize: displayImageMetadata?.fileSize || null,
+                  });
+                }}
               >
                 <Text style={[styles.imageActionText, { color: theme.colors.buttonText }]}>View Gallery</Text>
               </TouchableOpacity>
