@@ -93,8 +93,8 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.backgroundSecondary }]} edges={['top']}>
-      <StatusBar style={theme.colors.statusBar} />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <StatusBar style="auto" />
       {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.colors.headerBackground }]}>
         <Text style={[styles.headerTitle, { color: theme.colors.headerText }]}>CameraApp</Text>
