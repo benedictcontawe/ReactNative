@@ -9,7 +9,6 @@ import {
   Dimensions,
 } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { ImagePicker } from '../utils/imagePicker';
 import { useNavigation } from '@react-navigation/native';
 import { Routes } from '../constants/routes';
 import { useTheme } from '../constants/theme';
@@ -87,40 +86,6 @@ export default function CameraScreen() {
       } catch (error) {
         Alert.alert('Error', 'Failed to take picture: ' + error.message);
       }
-    }
-  };
-
-  const pickImageFromLibrary = async () => {
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets[0]) {
-        setCapturedImage(result.assets[0].uri);
-        Alert.alert(
-          'Image Selected!',
-          'What would you like to do?',
-          [
-            {
-              text: 'Cancel',
-              onPress: () => setCapturedImage(null),
-              style: 'cancel',
-            },
-            {
-              text: 'Use This Image',
-              onPress: () => {
-                navigation.navigate(Routes.HOME, { capturedImage: result.assets[0].uri });
-              },
-            },
-          ]
-        );
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to pick image: ' + error.message);
     }
   };
 

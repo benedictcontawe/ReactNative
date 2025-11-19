@@ -15,36 +15,28 @@ export default function OptionBottomSheetModal({
   onTakePhoto,
   onRecordVideo,
   onChoosePhoto,
-  onViewGallery,
 }) {
   const theme = useTheme();
-
-  // Dynamic styles based on the theme
   const bottomSheetStyle = {
     ...styles.bottomSheet,
     backgroundColor: theme.colors.surface,
   };
-
   const titleStyle = {
     ...styles.bottomSheetTitle,
     color: theme.colors.text,
   };
-
   const buttonStyle = {
     ...styles.bottomSheetButton,
     backgroundColor: theme.colors.surfaceSecondary,
   };
-
   const buttonTextStyle = {
     ...styles.buttonText,
     color: theme.colors.buttonPrimary,
   };
-
   const separatorStyle = {
     ...styles.separator,
     backgroundColor: theme.colors.border,
   };
-
   return (
     <Modal
       visible={visible}
@@ -56,34 +48,22 @@ export default function OptionBottomSheetModal({
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         <View style={bottomSheetStyle}>
           <Text style={titleStyle}>Camera Expo</Text>
-
           <TouchableOpacity style={buttonStyle} onPress={onTakePhoto}>
             <Text style={buttonTextStyle}>Take Photo</Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             style={buttonStyle}
             onPress={onRecordVideo}
           >
             <Text style={buttonTextStyle}>Record Video</Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             style={buttonStyle}
             onPress={onChoosePhoto}
           >
             <Text style={buttonTextStyle}>Choose Photo</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={buttonStyle}
-            onPress={onViewGallery}
-          >
-            <Text style={buttonTextStyle}>View Gallery</Text>
-          </TouchableOpacity>
-
           <View style={separatorStyle} />
-
           <TouchableOpacity style={buttonStyle} onPress={onClose}>
             <Text style={[styles.cancelButtonText, { color: theme.colors.buttonDanger }]}>Cancel</Text>
           </TouchableOpacity>

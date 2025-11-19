@@ -64,22 +64,17 @@ export default function HomeScreen() {
       }
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
+        allowsEditing: false,
         aspect: [4, 3],
         quality: 0.8,
       });//Launch image picker
       if (!result.canceled && result.assets[0]) {
-        setDisplayImage(result.assets[0].uri);
-        Alert.alert('Success', 'Image selected from gallery!');
+        const imageUri = result.assets[0].uri;
+        setDisplayImage(imageUri);
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to pick image: ' + error.message);
     }
-  };
-
-  const handleViewGallery = () => {
-    handleClose();
-    navigation.navigate(Routes.IMAGE_GALLERY, { capturedImage: displayImage });
   };
 
   const handleClearImage = () => {
@@ -102,7 +97,12 @@ export default function HomeScreen() {
       <StatusBar style={theme.colors.statusBar} />
       {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.colors.headerBackground }]}>
-        <Text style={[styles.headerText, { color: theme.colors.headerText }]}>CameraApp</Text>
+        <Text style={[styles.headerTitle, { color: theme.colors.headerText }]}>CameraApp</Text>
+        <TouchableOpacity onPress={() => navigation.navigate(Routes.IMAGE_GALLERY)}>
+          <Text style={[styles.headerButton, { color: theme.colors.buttonPrimary }]}>
+            Gallery
+          </Text>
+        </TouchableOpacity>
       </View>
       {/* Main Content Area */}
       <View style={[styles.content, { backgroundColor: theme.colors.backgroundSecondary }]}>
@@ -124,7 +124,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.imageActionButton, { backgroundColor: theme.colors.buttonPrimary }]}
-                onPress={handleViewGallery}
+                onPress={() => navigation.navigate(Routes.IMAGE_GALLERY, { capturedImage: displayImage })}
               >
                 <Text style={[styles.imageActionText, { color: theme.colors.buttonText }]}>View Gallery</Text>
               </TouchableOpacity>
@@ -147,7 +147,6 @@ export default function HomeScreen() {
         onTakePhoto={handleTakePhoto}
         onRecordVideo={handleRecordVideo}
         onChoosePhoto={handleChoosePhoto}
-        onViewGallery={handleViewGallery}
       />
     </SafeAreaView>
   );
@@ -158,12 +157,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingTop: 10,
     paddingBottom: 15,
     paddingHorizontal: 20,
   },
-  headerText: {
+  headerTitle: {
     fontSize: 18,
+    fontWeight: '600',
+  },
+  headerButton: {
+    fontSize: 16,
     fontWeight: '600',
   },
   content: {

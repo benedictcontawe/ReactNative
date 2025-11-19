@@ -24,20 +24,21 @@ export default function ImageGalleryScreen() {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    // Request media library permissions
-    (async () => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    ( async () => { 
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();//Request media library permissions
       if (status !== 'granted') {
         Alert.alert(
           'Permission Required',
           'We need access to your photo library to display images.'
         );
       }
-    })();
+    }) ();
 
-    // If an image was passed from navigation, add it to the gallery
-    if (route.params?.capturedImage) {
-      setImages([{ uri: route.params.capturedImage, id: Date.now() }]);
+    if (route.params?.capturedImage) {// If an image was passed from navigation, add it to the gallery
+      setImages(prevImages => { // Use a function to ensure we don't add duplicates if the user navigates back and forth
+        const imageExists = prevImages.some(img => img.uri === route.params.capturedImage);
+        return imageExists ? prevImages : [{ uri: route.params.capturedImage, id: Date.now() }, ...prevImages];
+      });
     }
   }, [route.params]);
 
@@ -65,15 +66,15 @@ export default function ImageGalleryScreen() {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
+        allowsEditing: false,
         aspect: [4, 3],
         quality: 0.8,
       });
 
       if (!result.canceled && result.assets[0]) {
+        const imageUri = result.assets[0].uri;
         setImages(prev => [
-          ...prev,
-          { uri: result.assets[0].uri, id: Date.now() },
+          { uri: imageUri, id: Date.now() }, ...prev
         ]);
       }
     } catch (error) {
@@ -100,7 +101,6 @@ export default function ImageGalleryScreen() {
 
   const clearAllImages = () => {
     if (images.length === 0) return;
-    
     Alert.alert(
       'Clear Gallery',
       'Are you sure you want to remove all images?',
