@@ -17,6 +17,15 @@ expo-env.d.ts
 *.key
 *.mobileprovision
 
+# Android build outputs (ignore build artifacts, but keep source code)
+android/app/build/
+android/.gradle/
+android/local.properties
+android/app/release/
+android/keystores/
+*.apk
+*.aab
+
 # Metro
 .metro-health-check*
 
@@ -31,6 +40,7 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
 
 # typescript
 *.tsbuildinfo
