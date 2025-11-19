@@ -12,13 +12,13 @@ import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useNavigation } from '@react-navigation/native';
 import { Routes } from '../constants/routes';
 import { useTheme } from '../constants/theme';
+import FlipIcon from '../components/FlipIcon';
 
 export default function CameraScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
-  // Use CameraType.back if available, otherwise fallback to string 'back'
   const [facing, setFacing] = useState(() => {
-    try {
+    try {//Use CameraType.back if available, otherwise fallback to string 'back'
       return CameraType?.back || 'back';
     } catch {
       return 'back';
@@ -28,20 +28,17 @@ export default function CameraScreen() {
   const [capturedImage, setCapturedImage] = useState(null);
   const cameraRef = useRef(null);
 
-  useEffect(() => {
-    // Request camera permission on mount
-    if (!permission?.granted) {
+  useEffect(() => {    
+    if (!permission?.granted) {// Request camera permission on mount
       requestPermission();
     }
   }, []);
 
-  if (!permission) {
-    // Camera permissions are still loading
+  if (!permission) {//Camera permissions are still loading
     return <View style={[styles.container, { backgroundColor: theme.colors.backgroundSecondary }]} />;
   }
 
-  if (!permission.granted) {
-    // Camera permissions are not granted yet
+  if (!permission.granted) {//Camera permissions are not granted yet
     return (
       <View style={[styles.container, { backgroundColor: theme.colors.backgroundSecondary }]}>
         <Text style={[styles.message, { color: theme.colors.text }]}>We need your permission to show the camera</Text>
@@ -53,8 +50,16 @@ export default function CameraScreen() {
   }
 
   const toggleCameraFacing = () => {
-    if (!CameraType || !CameraType.back || !CameraType.front) return;
-    setFacing(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+    try { 
+      if (CameraType && CameraType.back && CameraType.front) { //Check if CameraType is available
+        setFacing(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+      } else { //Fallback to string values if CameraType enum is not available
+        setFacing(current => (current === 'back' ? 'front' : 'back'));
+      }
+    } catch (error) { //Fallback to string values on error
+      console.error('Error toggling camera facing:', error); 
+      setFacing(current => (current === 'back' ? 'front' : 'back'));
+    }
   };
 
   const takePicture = async () => {
@@ -76,8 +81,7 @@ export default function CameraScreen() {
             },
             {
               text: 'Use This Photo',
-              onPress: () => {
-                // Navigate back with the image URI
+              onPress: () => {// Navigate back with the image URI
                 navigation.navigate(Routes.HOME, { capturedImage: photo.uri });
               },
             },
@@ -138,7 +142,7 @@ export default function CameraScreen() {
             activeOpacity={0.8}
           >
             <View style={[styles.flipButtonBackground, { borderColor: theme.colors.border }]}>
-              <Text style={styles.flipButtonIcon}>🔄</Text>
+              <FlipIcon size={24} color="#ffffff" />
             </View>
           </TouchableOpacity>
         </View>
@@ -212,6 +216,12 @@ const styles = StyleSheet.create({
   flipButtonIcon: {
     fontSize: 24,
     color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  flipButtonImage: {
+    width: 24,
+    height: 24,
+    tintColor: '#ffffff',
   },
   preview: {
     flex: 1,
