@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import FlatButtonComponent from './FlatButtonComponent';
 import AuthForm from './AuthForm';
 import { Colors } from '../constants/styles';
+import { Routes } from '../constants/route';
 
 function AuthContent({ isLogin, onAuthenticate }) {
   const navigation = useNavigation();
@@ -17,9 +18,9 @@ function AuthContent({ isLogin, onAuthenticate }) {
 
   function switchAuthModeHandler() {
     if (isLogin) {
-      navigation.replace('Signup');
+      navigation.replace(Routes.SIGNUP);
     } else {
-      navigation.replace('Login');
+      navigation.replace(Routes.LOGIN);
     }
   }
 

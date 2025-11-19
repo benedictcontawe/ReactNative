@@ -7,6 +7,7 @@ import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
 import { Colors } from './constants/styles';
+import { Routes } from './constants/route';
 import AuthContextProvider from './store/auth-context';
 import { Fragment } from 'react';
 import IconButtonComponent from './components/IconButtonComponent';
@@ -22,8 +23,8 @@ function AuthStack() {
         contentStyle: { backgroundColor: Colors.primary100 },
       }}
     >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name={Routes.LOGIN} component={LoginScreen} />
+      <Stack.Screen name={Routes.SIGNUP} component={SignupScreen} />
     </Stack.Navigator>
   );
 }
@@ -39,7 +40,7 @@ function AuthenticatedStack() {
       }}
     >
       <Stack.Screen 
-        name="Welcome" 
+        name={Routes.WELCOME} 
         component={WelcomeScreen} 
         options={{
           headerRight: ({ tintColor }) => (
