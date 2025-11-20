@@ -141,9 +141,7 @@ export default function CameraScreen() {
             onPress={toggleCameraFacing}
             activeOpacity={0.8}
           >
-            <View style={[styles.flipButtonBackground, { borderColor: theme.colors.border }]}>
-              <FlipIcon size={24} color="#ffffff" />
-            </View>
+            <FlipIcon size={60} color="#FFF" />
           </TouchableOpacity>
         </View>
       </CameraView>

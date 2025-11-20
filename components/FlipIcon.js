@@ -1,6 +1,5 @@
 import React from 'react';
 import Svg, { Path } from 'react-native-svg';
-
 /**
  * Custom flip camera icon component matching Android vector drawable design.
  * Represents a circular arrow indicating camera flip functionality.
@@ -9,19 +8,18 @@ import Svg, { Path } from 'react-native-svg';
  * @param {string} [props.color='#FFF'] - Color of the icon (hex format)
  * @returns {JSX.Element} The flip icon SVG component
  */
-export default function CustomIcon(props) {
+export default function FlipIcon({ size = 24, color = '#FFF' }) {
   return (
     <Svg
-      width={20}
-      height={20}
+      width={size}
+      height={size}
       viewBox="0 0 100 100"
       fill="none"
-      {...props}
     >
       {/* Arc 1 */}
       <Path
         d="M 29 29 A 20 20 0 0 1 71 71"
-        stroke="#FFF"
+        stroke={color}
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -29,12 +27,12 @@ export default function CustomIcon(props) {
       {/* Right Arrow (Filled White) */}
       <Path
         d="M69,50 79,50 89,50 79,62 Z"
-        fill="#FFF"
+        fill={color}
       />
       {/* Arc 2 */}
       <Path
         d="M 29 29 A 20 20 0 0 0 71 71"
-        stroke="#FFF"
+        stroke={color}
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -42,7 +40,7 @@ export default function CustomIcon(props) {
       {/* Left Arrow (Filled White) */}
       <Path
         d="M11,50 21,50 31,50 21,38 Z"
-        fill="#FFF"
+        fill={color}
       />
     </Svg>
   );
