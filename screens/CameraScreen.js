@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Routes } from '../constants/routes';
 import { useTheme } from '../constants/theme';
 import FlipIcon from '../components/FlipIcon';
+import ShutterIcon from '../components/ShutterIcon';
 
 export default function CameraScreen() {
   const theme = useTheme();
@@ -132,7 +133,7 @@ export default function CameraScreen() {
             onPress={takePicture}
             activeOpacity={0.8}
           >
-            <View style={[styles.shutterButtonOuter, { borderColor: theme.colors.border }]} />
+            <ShutterIcon size={100} color="#FFF" />
           </TouchableOpacity>
           
           {/* Flip Button - Right side (85-95% width), aligned with shutter */}
@@ -175,18 +176,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // Bottom edge at 95% from top = 5% from bottom (matching XML guideline constraint)
     bottom: '5%',
-  },
-  shutterButtonOuter: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 999, // Fully circular
-    backgroundColor: '#ffffff', // Solid white button (always white for camera)
-    borderWidth: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
   },
   // Flip Button - Right side (85-95% of screen width), top and bottom aligned with shutter
   flipButton: {
