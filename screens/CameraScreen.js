@@ -9,6 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import * as FileSystem from 'expo-file-system/legacy';
 import { useNavigation } from '@react-navigation/native';
 import { Routes } from '../constants/routes';
 import { useTheme } from '../constants/theme';
@@ -74,6 +75,37 @@ export default function CameraScreen() {
           }),
           triggerShutterHaptic()
         ]);        
+        console.log('=== PHOTO CAPTURE COMPLETE ===');
+        console.log('Photo URI from expo-camera:', photo.uri);
+        console.log('Cache directory base:', FileSystem.cacheDirectory);     
+        try {// Verify file exists and get file info
+          const fileInfo = await FileSystem.getInfoAsync(photo.uri);
+          if (fileInfo.exists) {
+            console.log('✅ File EXISTS at:', photo.uri);
+            console.log('File size:', fileInfo.size, 'bytes (', (fileInfo.size / 1024 / 1024).toFixed(2), 'MB)');
+            console.log('File is directory:', fileInfo.isDirectory);            
+            // Extract directory path from URI
+            const uriPath = photo.uri.replace('file://', '');
+            const dirPath = uriPath.substring(0, uriPath.lastIndexOf('/'));
+            console.log('File directory path:', dirPath);            
+            // Try to list the directory containing the file (need file:// scheme)
+            try {
+              const dirUri = 'file://' + dirPath;
+              const files = await FileSystem.readDirectoryAsync(dirUri);
+              console.log('Files in same directory:', files);
+              console.log('Total files found:', files.length);
+            } catch (dirError) {
+              console.warn('Could not list directory:', dirError.message);
+            }            
+            // Show Android path format
+            const androidPath = photo.uri.replace('file:///data/user/0/', '/data/data/');
+            console.log('Android path (for Device Explorer):', androidPath);
+          } else {
+            console.warn('❌ File does NOT exist at:', photo.uri);
+          }
+        } catch (fileError) {
+          console.error('Error checking file:', fileError);
+        }        
         setCapturedImage(photo.uri);
         Alert.alert(
           'Photo Captured!',
@@ -129,27 +161,26 @@ export default function CameraScreen() {
         style={styles.camera}
         facing={facing}
         mode="picture"
-      >
-        <View style={styles.overlay}>
-          {/* Shutter Button - Centered, Large (40-60% width), 95% from top */}
-          <TouchableOpacity
-            style={styles.shutterButton}
-            onPress={takePicture}
-            activeOpacity={0.8}
-          >
-            <ShutterIcon size={100} color="#FFF" />
-          </TouchableOpacity>
-          
-          {/* Flip Button - Right side (85-95% width), aligned with shutter */}
-          <TouchableOpacity
-            style={styles.flipButton}
-            onPress={toggleCameraFacing}
-            activeOpacity={0.8}
-          >
-            <FlipIcon size={60} color="#FFF" />
-          </TouchableOpacity>
-        </View>
-      </CameraView>
+      />
+      {/* Overlay positioned absolutely outside CameraView to avoid children warning */}
+      <View style={styles.overlay}>
+        {/* Shutter Button - Centered, Large (40-60% width), 95% from top */}
+        <TouchableOpacity
+          style={styles.shutterButton}
+          onPress={takePicture}
+          activeOpacity={0.8}
+        >
+          <ShutterIcon size={100} color="#FFF" />
+        </TouchableOpacity>
+        {/* Flip Button - Right side (85-95% width), aligned with shutter */}
+        <TouchableOpacity
+          style={styles.flipButton}
+          onPress={toggleCameraFacing}
+          activeOpacity={0.8}
+        >
+          <FlipIcon size={60} color="#FFF" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -167,7 +198,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   overlay: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'transparent',
   },
   // Shutter Button - Large, centered (40-60% of screen width), bottom edge at 95% from top
@@ -194,25 +229,6 @@ const styles = StyleSheet.create({
     // This ensures bottom-to-bottom alignment
     bottom: '5%',
     // Top will automatically align since both have same bottom and same height
-  },
-  flipButtonBackground: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 999,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-  },
-  flipButtonIcon: {
-    fontSize: 24,
-    color: '#ffffff',
-    fontWeight: 'bold',
-  },
-  flipButtonImage: {
-    width: 24,
-    height: 24,
-    tintColor: '#ffffff',
   },
   preview: {
     flex: 1,
