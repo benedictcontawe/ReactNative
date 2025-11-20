@@ -14,6 +14,7 @@ import { Routes } from '../constants/routes';
 import { useTheme } from '../constants/theme';
 import FlipIcon from '../components/FlipIcon';
 import ShutterIcon from '../components/ShutterIcon';
+import { triggerShutterHaptic } from '../utils/hapticFeedback';
 
 export default function CameraScreen() {
   const theme = useTheme();
@@ -66,10 +67,13 @@ export default function CameraScreen() {
   const takePicture = async () => {
     if (cameraRef.current) {
       try {
-        const photo = await cameraRef.current.takePictureAsync({
-          quality: 0.8,
-          base64: false,
-        });
+        const [photo] = await Promise.all([
+          cameraRef.current.takePictureAsync({
+            quality: 0.8,
+            base64: false,
+          }),
+          triggerShutterHaptic()
+        ]);        
         setCapturedImage(photo.uri);
         Alert.alert(
           'Photo Captured!',

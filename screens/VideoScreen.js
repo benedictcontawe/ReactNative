@@ -11,6 +11,7 @@ import { useTheme } from '../constants/theme';
 import FlipIcon from '../components/FlipIcon';
 import RecordIcon from '../components/RecordIcon';
 import RecordingIcon from '../components/RecordingIcon';
+import { triggerRecordingHaptic } from '../utils/hapticFeedback'
 
 export default function VideoScreen() {
   const theme = useTheme();
@@ -59,8 +60,8 @@ export default function VideoScreen() {
     }
   };
 
-  const handleRecordPress = () => {
-    // UI only - toggle recording state for visual feedback
+  const handleRecordPress = async () => {
+    await triggerRecordingHaptic();
     setIsRecording(!isRecording);
     // TODO: Implement actual video recording functionality
   };
