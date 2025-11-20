@@ -31,7 +31,7 @@ function Navigation() {
         <Stack.Screen 
           name={Routes.VIDEO} 
           component={VideoScreen} 
-          options={{ title: 'Record Video', headerShown: true }}
+          options={{ title: 'Record Video', headerShown: false }}
         />
         <Stack.Screen 
           name={Routes.IMAGE_GALLERY} 
