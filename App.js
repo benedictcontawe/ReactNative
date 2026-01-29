@@ -1,38 +1,26 @@
-import { StyleSheet } from 'react-native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './screens/HomeScreen';
-import FlatListScreen from './screens/FlatListScreen';
-import ModalScreen from './screens/ModalScreen';
-import BottomSheetScreen from './screens/BottomSheetScreen';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import SettingsScreen from './screens/SettingsScreen';
+import CustomSidebar from './components/CustomSideBar';
 
-  const BottomTab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <NavigationContainer>
-          <BottomTab.Navigator
-            initialRouteName="Home" >
-            <BottomTab.Screen name="Home" component={HomeScreen} />
-            <BottomTab.Screen name='Modal' component={ModalScreen} />
-            <BottomTab.Screen name="BottomSheet" component={BottomSheetScreen} />
-            <BottomTab.Screen name="Flat List" component={FlatListScreen} />
-          </BottomTab.Navigator>
-        </NavigationContainer>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+    <NavigationContainer>
+      <Drawer.Navigator 
+        initialRouteName="Home" 
+        drawerContent={ (props) => <CustomSidebar { ...props } />}
+        // Configuration goes here:
+        screenOptions={{
+          drawerPosition: 'left', // Use a simple string 'left' or 'right'
+        }}
+        swipeEnabled={ false } 
+      >        
+        <Drawer.Screen name="Home" component={HomeScreen} />
+        <Drawer.Screen name="Settings" component={SettingsScreen} />
+      </Drawer.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "BottomTabApp",
-    "slug": "BottomTabApp",
+    "name": "NavigationDraweApp",
+    "slug": "NavigationDraweApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,15 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.benedictcontawe.BottomTabApp"
+      "package": "com.benedictcontawe.NavigationDraweApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1837692d-a7ac-48a6-a77e-edf5f3a3d505"
+      }
     }
   }
 }
