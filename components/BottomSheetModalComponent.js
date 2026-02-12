@@ -5,7 +5,7 @@ import { BottomSheetModal, BottomSheetView, BottomSheetTextInput } from '@gorhom
 const BottomSheetModalComponent = forwardRef((props, ref) => {
     const { renderBackdrop, handleHideSheet, handleInputFocus } = props;
     const [bottomSheetTextInputValue, setBottomSheetTextInputValue] = useState('');
-    const snapPoints = useMemo(() => [`30%`, `50%`, `75%`], []);
+    const snapPoints = useMemo(() => [`30%`, `50%`, `70%`], []);
 
     return (
         <BottomSheetModal 
