@@ -15,7 +15,6 @@ const BottomSheetScreen = () => {
   const handleShowScrollSheet = () => bottomSheetScrollModalRef.current?.present();
   // 4. Focus handler (updated to accept a specific ref)
   const handleFocus = useCallback((ref) => {
-    // Snap to index 2 (the 75% or 90% point depending on your component)
     ref.current?.snapToIndex(3);
   }, []);
 
@@ -35,7 +34,7 @@ const BottomSheetScreen = () => {
         <Button title="Show Scroll View Sheet" onPress={handleShowScrollSheet} />
         <Button title="Hide All" onPress={() => {
             bottomSheetModalRef.current?.close();
-            scrollModalRef.current?.close();
+            bottomSheetScrollModalRef.current?.close();
         }} color="red" />
       </View>
       {/* MODAL 1: Standard View */}

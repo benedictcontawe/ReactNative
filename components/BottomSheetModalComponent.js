@@ -1,4 +1,4 @@
-import React, { useState, useMemo, forwardRef } from 'react';
+import { useState, useMemo, forwardRef } from 'react';
 import { Button, StyleSheet, Text } from 'react-native';
 import { BottomSheetModal, BottomSheetView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
