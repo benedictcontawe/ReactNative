@@ -1,0 +1,70 @@
+# React Native — Sample Project
+
+A small React Native project demonstrating navigation, a custom sidebar, and global state management with Zustand.
+
+## Features
+
+- Simple counter state using Zustand (`store/useCounterStore.js`).
+- Multiple screens: Home, Settings, and `ZustandScreen`.
+- Custom sidebar component (`components/CustomSideBar.js`).
+- Basic navigation setup and example UI in `App.js` / `index.js`.
+- Minimal, easy-to-read code ideal for learning or quick prototyping.
+
+## Quick Start
+
+Prerequisites:
+- Node.js (16+ recommended)
+- npm or yarn
+- Expo CLI (if using Expo) or React Native CLI
+
+Install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+Run (Expo):
+
+```bash
+npx expo start
+```
+
+Run (React Native CLI):
+
+```bash
+npx react-native run-android
+npx react-native run-ios
+```
+
+## Usage
+
+- Open the app on your simulator or device.
+- Use the sidebar to navigate between `HomeScreen`, `SettingsScreen`, and `ZustandScreen`.
+- On `ZustandScreen` you can increment/decrement the shared counter — the state is persisted in the global store.
+
+## Project Structure
+
+- [App.js](App.js) — app entry and navigation setup
+- [index.js](index.js) — React Native bootstrap
+- [app.json](app.json), [eas.json](eas.json) — project config
+- [assets/](assets/) — images and static assets
+- [components/CustomSideBar.js](components/CustomSideBar.js) — custom drawer/sidebar component
+- [screens/HomeScreen.js](screens/HomeScreen.js) — home view
+- [screens/SettingsScreen.js](screens/SettingsScreen.js) — settings view
+- [screens/ZustandScreen.js](screens/ZustandScreen.js) — example using the Zustand store
+- [store/useCounterStore.js](store/useCounterStore.js) — Zustand store for counter state
+
+## Contributing
+
+- Fork the repo, create a feature branch, and open a pull request.
+- Keep changes small and focused; update this README when adding notable features.
+
+## License
+
+This project is provided as-is for learning and prototyping. Add a license file if you plan to publish or share widely.
+
+---
+
+If you'd like, I can add badges, code examples for the store usage, or update the README with exact `package.json` scripts from your project.
