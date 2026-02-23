@@ -1,9 +1,10 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
+import CustomSidebar from './components/CustomSideBar';
 import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import ZustandScreen from './screens/ZustandScreen';
-import CustomSidebar from './components/CustomSideBar';
+import PagerViewScreen from './screens/PagerViewScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -21,6 +22,7 @@ export default function App() {
         <Drawer.Screen name="Home" component={HomeScreen} />
         <Drawer.Screen name="Settings" component={SettingsScreen} />
         <Drawer.Screen name="Zustand" component={ZustandScreen} />
+        <Drawer.Screen name="PagerView" component={PagerViewScreen} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
