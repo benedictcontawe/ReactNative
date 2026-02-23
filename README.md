@@ -5,7 +5,8 @@ A small React Native project demonstrating navigation, a custom sidebar, and glo
 ## Features
 
 - Simple counter state using Zustand (`store/useCounterStore.js`).
-- Multiple screens: Home, Settings, and `ZustandScreen`.
+- Multiple screens: Home, Settings, Zustand, and `PagerViewScreen`.
+- Pager View feature for swipeable screen navigation (`screens/PagerViewScreen.js`).
 - Custom sidebar component (`components/CustomSideBar.js`).
 - Basic navigation setup and example UI in `App.js` / `index.js`.
 - Minimal, easy-to-read code ideal for learning or quick prototyping.
@@ -41,8 +42,9 @@ npx react-native run-ios
 ## Usage
 
 - Open the app on your simulator or device.
-- Use the sidebar to navigate between `HomeScreen`, `SettingsScreen`, and `ZustandScreen`.
+- Use the sidebar to navigate between `HomeScreen`, `SettingsScreen`, `ZustandScreen`, and `PagerViewScreen`.
 - On `ZustandScreen` you can increment/decrement the shared counter — the state is persisted in the global store.
+- On `PagerViewScreen` you can swipe through multiple pages to see the pager view in action.
 
 ## Project Structure
 
@@ -54,6 +56,7 @@ npx react-native run-ios
 - [screens/HomeScreen.js](screens/HomeScreen.js) — home view
 - [screens/SettingsScreen.js](screens/SettingsScreen.js) — settings view
 - [screens/ZustandScreen.js](screens/ZustandScreen.js) — example using the Zustand store
+- [screens/PagerViewScreen.js](screens/PagerViewScreen.js) — swipeable pager view feature
 - [store/useCounterStore.js](store/useCounterStore.js) — Zustand store for counter state
 
 ## Contributing
