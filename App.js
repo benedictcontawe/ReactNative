@@ -5,6 +5,7 @@ import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import ZustandScreen from './screens/ZustandScreen';
 import PagerViewScreen from './screens/PagerViewScreen';
+import ChatScreen from './screens/ChatScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -23,6 +24,7 @@ export default function App() {
         <Drawer.Screen name="Settings" component={SettingsScreen} />
         <Drawer.Screen name="Zustand" component={ZustandScreen} />
         <Drawer.Screen name="PagerView" component={PagerViewScreen} />
+        <Drawer.Screen name="Chat" component={ChatScreen} />
       </Drawer.Navigator>
     </NavigationContainer>
   );

@@ -6,6 +6,7 @@ A small React Native project demonstrating navigation, a custom sidebar, and glo
 
 - Simple counter state using Zustand (`store/useCounterStore.js`).
 - Multiple screens: Home, Settings, Zustand, and `PagerViewScreen`.
+ - Multiple screens: Home, Settings, Zustand, `PagerViewScreen`, and `ChatScreen`.
 - Pager View feature for swipeable screen navigation (`screens/PagerViewScreen.js`).
 - Custom sidebar component (`components/CustomSideBar.js`).
 - Basic navigation setup and example UI in `App.js` / `index.js`.
@@ -45,6 +46,7 @@ npx react-native run-ios
 - Use the sidebar to navigate between `HomeScreen`, `SettingsScreen`, `ZustandScreen`, and `PagerViewScreen`.
 - On `ZustandScreen` you can increment/decrement the shared counter — the state is persisted in the global store.
 - On `PagerViewScreen` you can swipe through multiple pages to see the pager view in action.
+ - On `ChatScreen` you can view and send messages in the local chat UI (no backend by default).
 
 ## Project Structure
 
@@ -57,6 +59,7 @@ npx react-native run-ios
 - [screens/SettingsScreen.js](screens/SettingsScreen.js) — settings view
 - [screens/ZustandScreen.js](screens/ZustandScreen.js) — example using the Zustand store
 - [screens/PagerViewScreen.js](screens/PagerViewScreen.js) — swipeable pager view feature
+ - [screens/ChatScreen.js](screens/ChatScreen.js) — chat interface (message list + input)
 - [store/useCounterStore.js](store/useCounterStore.js) — Zustand store for counter state
 
 ## Contributing
@@ -71,3 +74,14 @@ This project is provided as-is for learning and prototyping. Add a license file 
 ---
 
 If you'd like, I can add badges, code examples for the store usage, or update the README with exact `package.json` scripts from your project.
+
+## ChatScreen
+
+- **Purpose**: Demonstrates an in-app chat UI with a scrollable message list and a text input to compose messages. It's useful as a UI reference or starting point for integrating a real messaging backend.
+- **File**: [screens/ChatScreen.js](screens/ChatScreen.js)
+- **Behavior**:
+	- Displays messages in a vertical list, grouped by sender/time where implemented.
+	- Provides an input field and send button to append messages locally.
+	- No network/back-end configuration is included by default — you can wire it to your API or WebSocket service.
+- **Usage**: Open the app, navigate to the sidebar and select the Chat screen to try the UI.
+- **Notes**: If you want, I can add sample message persistence, mock data, or an example integration with a WebSocket or Firebase.
